@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{.PageTitle}}</title>
+    <style>
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: sans-serif;
+        background: black;
+        color: white;
+        text-align: center;
+        font-weight: 600;
+        padding: 1rem;
+      }
+
+      ul {
+        display: grid;
+        grid-template-columns: repeat({{.Columns}}, 1fr);
+        grid-gap: 1rem;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      @media (max-width: 600px) {
+        ul {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      @media (max-width: 320px) {
+        ul {
+          grid-template-columns: repeat(1, 1fr);
+        }
+      }
+
+      li {
+        aspect-ratio: {{.Ratio}};
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        position: relative;
+      }
+
+      li span {
+        z-index: 999;
+      }
+      li .images {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      li .images img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        min-height: 100%;
+        min-width: 100%;
+        max-width: 100%;
+      }
+
+      .images img {
+        position: absolute;
+        top: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>{{.PageTitle}}</h1>
+    <ul>
+      {{range .Images}}
+      <li>
+        <div class="images">
+          <img src="{{.Src}}" alt="" loading="lazy" />
+        </div>
+      </li>
+      {{end}}
+    </ul>
+    <script>
+      const elements = document.querySelectorAll(".images");
+      elements.forEach((el) => {
+        window.addEventListener(
+          "load",
+          (event) => {
+            createObserver(el);
+          },
+          false
+        );
+      });
+
+      function createObserver(el) {
+        let observer;
+
+        let options = {
+          root: null,
+          rootMargin: "0px",
+          threshold: buildThresholdList(),
+        };
+
+        observer = new IntersectionObserver(handleIntersect, options);
+        observer.observe(el);
+      }
+
+      function buildThresholdList() {
+        let thresholds = [];
+        let numSteps = 20;
+
+        for (let i = 1.0; i <= numSteps; i++) {
+          let ratio = i / numSteps;
+          thresholds.push(ratio);
+        }
+
+        thresholds.push(0);
+        return thresholds;
+      }
+
+      function handleIntersect(entries, observer) {
+        entries.forEach((entry) => {
+          if (entry.intersectionRatio < 0.1) {
+            for (const child of entry.target.children) {
+              child.style.display = "none";
+            }
+          } else {
+            for (const child of entry.target.children) {
+              child.style.display = "block";
+            }
+          }
+        });
+      }
+    </script>
+  </body>
+</html>
