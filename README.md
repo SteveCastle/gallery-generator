@@ -1,12 +1,11 @@
 # Gallery Generator
 
-A simple GO program to generate a gallery of images from a folder of images.
+A simple GO program to serve a gallery of images from a folder of images.
 
 ## Build
-
-    ```bash
-    go build .
-    ```
+```bash
+go build .
+```
 
 ## Usage
 
