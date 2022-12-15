@@ -43,7 +43,6 @@ func main() {
 	}
 	rand.Seed(time.Now().UnixNano())
 	rand.Shuffle(len(images), func(i, j int) { images[i], images[j] = images[j], images[i] })
-	fmt.Println(images)
 	fs := http.FileServer(http.Dir("./images"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
